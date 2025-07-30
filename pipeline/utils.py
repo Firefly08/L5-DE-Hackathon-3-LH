@@ -1,5 +1,6 @@
 import re
 import numpy as np
+import datetime
 
 def drop_empty_rows(df, thresh=0.5):
     """
@@ -47,3 +48,10 @@ def define_date(df, year, month):
 def merge_datasets(df1, df2):
     """ Merge two DataFrames on 'date' column """
     return df1.merge(df2, on='date', how='inner')
+
+def get_mins_from_time(time):
+    return 60*int(time.split(':')[0]) + int(time.split(':')[1])
+
+def filter_by_year(df, year):
+    """ Filter DataFrame by year """
+    return df[df['date'].dt.year == year].reset_index(drop=True)

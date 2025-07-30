@@ -1,6 +1,7 @@
 import re
 import numpy as np
 import datetime
+import pandas as pd
 
 def drop_empty_rows(df, thresh=0.5):
     """
@@ -25,10 +26,9 @@ def load_sheets(file_path):
     """ Load Excel workbook with all sheets"""
     return pd.read_excel(file_path, sheet_name=None)
 
-def drop_rows(df, n):
-    """ Drop the leading n rows from a DataFrame """
-    # drop first n rows and any empties
-    return df.drop(index=range(n)).reset_index(drop=True)
+def drop_rows(df, n, start=0):
+    """Drop the leading n rows in a DataFrame"""
+    return df.drop(index=range(start, start + n)).reset_index(drop=True)
 
 # define snow column
 def define_snow(df):
@@ -42,7 +42,7 @@ def define_snow(df):
     return df
 
 def define_date(df, year, month):
-    df["date"] = df["date"].apply(lambda x: datetime.date(year, month, int(x)))
+    df["date"] = pd.to_datetime(df["date"].apply(lambda x: datetime.date(year, month, int(x))))
     return df
 
 def merge_datasets(df1, df2):

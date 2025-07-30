@@ -31,13 +31,13 @@ def clean_daytime_sheets(sheets, column_names):
             df[col] = df[col].str.split('(', expand=True).loc[:,0] 
             
         # update date
-        df["date"] = df["date"].apply(lambda x: datetime.date(year, month, int(x)))
+        df["date"] = pd.to_datetime(df["date"].apply(lambda x: datetime.date(year, month, int(x))))
         all_sheets.append(df)
         
     return pd.concat(all_sheets, ignore_index=True)
 
 
-def clean_weather_sheets(sheets, column_names):
+def clean_weather_sheets(sheets, column_names, drop_n, drop_start):
     """ Processing all sheets and concatenating them into a single DataFrame """
     all_sheets = []
     for k in sheets.keys():
@@ -49,7 +49,10 @@ def clean_weather_sheets(sheets, column_names):
         df.columns = column_names
         
         # # drop first five rows and any empties
-        df = drop_rows(df, 5)
+        if drop_start:
+            df = drop_rows(df, drop_n)
+        else:
+            df = drop_rows(df, drop_n, len(df) - drop_n)
         df = drop_empty_rows(df).reset_index(drop=True)
         # # or
         # # df = df.drop(df.index[[0, 1]])
